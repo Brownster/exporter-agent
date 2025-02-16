@@ -8,6 +8,8 @@ from agents.research_agent import ResearchAgent
 from agents.coding_agent import CodingAgent
 from agents.validation_agent import ValidationAgent
 from agents.testing_agent import EnhancedTestingAgent
+from agents.dashboard_agent import DashboardAgent
+from agents.alert_agent import AlertAgent
 from agents.llm_provider import get_llm
 from langchain.schema import HumanMessage, SystemMessage
 
@@ -19,6 +21,8 @@ class Orchestrator:
         self.coding_agent = CodingAgent()
         self.validation_agent = ValidationAgent()
         self.testing_agent = EnhancedTestingAgent()
+        self.dashboard_agent = DashboardAgent()
+        self.alert_agent = AlertAgent()
 
     def validate_metrics(self, metrics: List[Dict[str, str]]):
         allowed_types = {"gauge", "counter", "histogram"}
@@ -56,10 +60,27 @@ class Orchestrator:
         test_result = self.testing_agent.run_tests()
         if not test_result.passed:
             await self._diagnose_test_failure(test_result)
+        
+        # Generate dashboard design based on final metrics
+        dashboard_design = await self.dashboard_agent.generate_dashboard_design(research.metrics)
+        # Save dashboard design to /dashboards/dashboard.txt
+        with open("dashboards/dashboard.txt", "w") as f:
+            f.write(dashboard_design)
+        print("Dashboard design saved to /dashboards/dashboard.txt")
+        
+        # Generate alert suggestions based on final metrics
+        alert_suggestions = await self.alert_agent.generate_alert_suggestions(research.metrics)
+        # Save alert suggestions to /alerts/alerts.txt
+        with open("alerts/alerts.txt", "w") as f:
+            f.write(alert_suggestions)
+        print("Alert suggestions saved to /alerts/alerts.txt")
+        
         return {
             "research": research,
             "code": validated,
-            "test_result": test_result
+            "test_result": test_result,
+            "dashboard": dashboard_design,
+            "alerts": alert_suggestions
         }
 
     async def fix_code_errors(self, validated: ValidatedCodeArtifact, research: ResearchResult) -> ValidatedCodeArtifact:
@@ -67,7 +88,6 @@ class Orchestrator:
             errors=validated.validation_errors,
             code=validated.formatted_code
         )
-        # Use the coding agent's LLM configuration for code fixes.
         llm = get_llm(agent_type="coding")
         messages = [
             SystemMessage(content=prompts["system_messages"]["default"]),
@@ -106,7 +126,6 @@ class Orchestrator:
             "Analyze the test failures and suggest fixes for the following code:\n"
             f"{self.testing_agent.get_current_code()}"
         )
-        # Use the testing agent's LLM configuration for diagnosis.
         llm = get_llm(agent_type="testing")
         messages = [
             SystemMessage(content=prompts["system_messages"]["default"]),
