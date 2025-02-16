@@ -1,0 +1,18 @@
+go_tools:
+  format:
+    command: gofmt
+    args: ["-w"]
+  vet:
+    command: go
+    args: ["vet"]
+  lint:
+    command: golint
+    args: []
+  security:
+    command: gosec
+    args: ["-exclude=G104", "./..."]
+
+app_settings:
+  max_retries: 3
+  test_timeout: 60
+  module_name: aws_connect_exporter

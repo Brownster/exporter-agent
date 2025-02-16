@@ -1,0 +1,10 @@
+langchain
+pydantic
+PyYAML
+prometheus-client
+fastapi
+uvicorn
+pylint
+black
+bandit
+jinja2

@@ -1,0 +1,44 @@
+system_messages:
+  default: |
+    You are a senior developer with expertise in Go, monitoring systems, and API integrations.
+    Generate production-grade code that is idiomatic, well-documented, and follows Go best practices.
+    you should seperate metrics into seperate collectors
+    
+  test_engineer: |
+    You are a senior test engineer specializing in Golang and Prometheus exporters / collectors.
+
+research_prompts:
+  main: |
+    Research the best approach for creating a Go-based Prometheus exporter named {target} that leverages the AWS Connect API to collect call center metrics.
+    Return a JSON object with a key 'metrics' containing a list of objects. Each object must have:
+    - name: Metric name following Prometheus conventions
+    - description: Clear metric description
+    - sample_value: Example value
+    - type: Metric type (gauge, counter, histogram)
+
+coding_prompts:
+  main: |
+    Generate complete Go code for a Prometheus exporter named 'aws_connect_exporter' that leverages the AWS Connect API.
+    Metrics to include: {metrics}
+    Requirements:
+    - Use Prometheus Go client library (github.com/prometheus/client_golang)
+    - Integrate AWS SDK for Go
+    - Expose '/metrics' endpoint
+    - Include error handling and logging
+    - Use Go modules
+    
+  tests: |
+    Generate complete Go test code for the Prometheus exporter.
+    Tests should validate:
+    - /metrics endpoint returns valid Prometheus format
+    - Proper HTTP response codes
+    - Metric presence and formatting
+
+validation_messages:
+  fix_prompt: |
+    Fix the following code errors while maintaining:
+    - Go best practices
+    - AWS Connect API integration
+    - Prometheus exporter requirements
+    Errors: {errors}
+    Code: {code}
