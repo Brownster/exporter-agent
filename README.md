@@ -121,6 +121,8 @@ func main() {
     http.ListenAndServe(":8080", nil)
 }
 
+![Screenshot_20250216_212202](https://github.com/user-attachments/assets/d0acb2fe-4f22-42f8-8b4e-cf36a8281567)
+
 Contributing 🤝
 
 We welcome contributions! Please follow these steps:
