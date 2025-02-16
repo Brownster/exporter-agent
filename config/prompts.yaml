@@ -57,3 +57,18 @@ validation_messages:
     - Robust error handling and logging
     Errors: {errors}
     Code: {code}
+
+dashboard_prompts:
+  main: |
+    Based on the following metrics:
+    {metrics}
+    Provide a detailed design suggestion for a Grafana dashboard that displays these metrics.
+    Include recommendations for panels, visualization types, and layout. Your output should be descriptive and serve as inspiration.
+
+alert_prompts:
+  main: |
+    Based on the following metrics:
+    {metrics}
+    Analyze the data and suggest appropriate alerting rules.
+    Describe what thresholds should trigger alerts and what type of notifications would be ideal.
+    Your output should be descriptive and ready to include in a final report.
