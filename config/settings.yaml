@@ -1,3 +1,14 @@
+llm:
+  research:
+    provider: gpt-turbo
+    model: gpt-3.5-turbo
+  coding:
+    provider: gpt-turbo
+    model: gpt-3.5-turbo
+  testing:
+    provider: gpt-turbo
+    model: gpt-3.5-turbo
+    
 go_tools:
   format:
     command: gofmt
