@@ -1,4 +1,3 @@
-#orchestration/orchestrator.py
 import asyncio
 import re
 import subprocess
@@ -9,7 +8,7 @@ from agents.research_agent import ResearchAgent
 from agents.coding_agent import CodingAgent
 from agents.validation_agent import ValidationAgent
 from agents.testing_agent import EnhancedTestingAgent
-from langchain.chat_models import ChatOpenAI
+from agents.llm_provider import get_llm
 from langchain.schema import HumanMessage, SystemMessage
 
 class Orchestrator:
@@ -68,7 +67,8 @@ class Orchestrator:
             errors=validated.validation_errors,
             code=validated.formatted_code
         )
-        llm = ChatOpenAI(temperature=0)
+        # Use the coding agent's LLM configuration for code fixes.
+        llm = get_llm(agent_type="coding")
         messages = [
             SystemMessage(content=prompts["system_messages"]["default"]),
             HumanMessage(content=fix_prompt)
@@ -106,7 +106,8 @@ class Orchestrator:
             "Analyze the test failures and suggest fixes for the following code:\n"
             f"{self.testing_agent.get_current_code()}"
         )
-        llm = ChatOpenAI(temperature=0)
+        # Use the testing agent's LLM configuration for diagnosis.
+        llm = get_llm(agent_type="testing")
         messages = [
             SystemMessage(content=prompts["system_messages"]["default"]),
             HumanMessage(content=diagnosis_prompt)
