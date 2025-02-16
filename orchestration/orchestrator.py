@@ -88,6 +88,7 @@ class Orchestrator:
             errors=validated.validation_errors,
             code=validated.formatted_code
         )
+        # Use the LLM configured for coding fixes
         llm = get_llm(agent_type="coding")
         messages = [
             SystemMessage(content=prompts["system_messages"]["default"]),
@@ -126,6 +127,7 @@ class Orchestrator:
             "Analyze the test failures and suggest fixes for the following code:\n"
             f"{self.testing_agent.get_current_code()}"
         )
+        # Use the LLM configured for testing diagnosis
         llm = get_llm(agent_type="testing")
         messages = [
             SystemMessage(content=prompts["system_messages"]["default"]),
