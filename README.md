@@ -1,6 +1,6 @@
 # ExporterGenius 🚀🤖
 
-**AI-Powered Prometheus Exporter Generator for AWS Connect**
+**AI-Powered Prometheus Exporter Generator for target platform of your choice**
 
 [![Go Version](https://img.shields.io/badge/Go-1.20%2B-blue)](https://golang.org/)
 [![Python Version](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org/)
