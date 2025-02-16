@@ -2,43 +2,58 @@ system_messages:
   default: |
     You are a senior developer with expertise in Go, monitoring systems, and API integrations.
     Generate production-grade code that is idiomatic, well-documented, and follows Go best practices.
-    you should seperate metrics into seperate collectors
+    Ensure that each logical group of metrics (api call or cli command) is implemented as a separate collector for modularity and clarity.
     
   test_engineer: |
-    You are a senior test engineer specializing in Golang and Prometheus exporters / collectors.
+    You are a senior test engineer specializing in Go and Prometheus exporters/collectors.
+    Generate tests that not only validate correct behavior but also ensure proper error handling and response formatting.
 
 research_prompts:
   main: |
     Research the best approach for creating a Go-based Prometheus exporter named {target} that leverages the AWS Connect API to collect call center metrics.
-    Return a JSON object with a key 'metrics' containing a list of objects. Each object must have:
+    Consider performance, scalability, and error handling.
+    Return a valid JSON object with a key 'metrics' containing a list of objects. Each object must have:
     - name: Metric name following Prometheus conventions
-    - description: Clear metric description
-    - sample_value: Example value
-    - type: Metric type (gauge, counter, histogram)
+    - description: Clear and concise metric description
+    - sample_value: An example value (as a number or string, as appropriate)
+    - type: Metric type (one of: gauge, counter, histogram)
+    - api_command: details on api / go sdk to use to get metric
 
 coding_prompts:
   main: |
-    Generate complete Go code for a Prometheus exporter named 'aws_connect_exporter' that leverages the AWS Connect API.
+    Generate complete Go code for a Prometheus exporter named {target} that leverages the AWS Connect API.
     Metrics to include: {metrics}
     Requirements:
-    - Use Prometheus Go client library (github.com/prometheus/client_golang)
-    - Integrate AWS SDK for Go
-    - Expose '/metrics' endpoint
-    - Include error handling and logging
-    - Use Go modules
+    - Use the Prometheus Go client library (github.com/prometheus/client_golang)
+    - Integrate the AWS SDK for Go to interface with AWS Connect
+    - Expose an HTTP endpoint '/metrics' that serves Prometheus-formatted metrics
+    - Implement each metric as a separate collector for modularity
+    - Include structured error handling and logging throughout the code
+    - Use Go modules and follow idiomatic Go style
+    - Ensure the code is production-grade and includes appropriate comments and documentation
+    - main.go should be located in cmd/$exporter_name/main.go
+    - collectors are located /collectors
+    - Where possible api config should be located /connect/api.go
+    - variables or needed config will need to be passed as flags when starting using kingpin
     
-  tests: |
-    Generate complete Go test code for the Prometheus exporter.
-    Tests should validate:
-    - /metrics endpoint returns valid Prometheus format
-    - Proper HTTP response codes
-    - Metric presence and formatting
+tests: |
+  Generate a complete suite of Go test code for the Prometheus exporter and its individual collectors.
+  The tests should:
+  - Validate that the '/metrics' endpoint returns a valid Prometheus format.
+  - Check for correct HTTP response codes.
+  - Verify the presence and correct formatting of each metric collector.
+  - Include both positive and negative test cases to ensure robustness.
+  - Verify the proper function of collectors by writing Go tests.
+  - Store the test files in a 'collector' folder and any test data in 'collectors/testdata/'.
+  - main.go is located in cmd/$exporter_name/main.go
+  - check collectors are located in /collectors folder
 
 validation_messages:
   fix_prompt: |
-    Fix the following code errors while maintaining:
-    - Go best practices
-    - AWS Connect API integration
-    - Prometheus exporter requirements
+    Fix the following code errors while ensuring:
+    - Adherence to Go best practices and idiomatic patterns
+    - Proper integration with the AWS Connect API
+    - Accurate implementation of separate collectors for each metric
+    - Robust error handling and logging
     Errors: {errors}
     Code: {code}
