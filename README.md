@@ -6,7 +6,7 @@
 [![Python Version](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Automatically generate production-ready Prometheus exporters for target platform of choice using AI agents. This Go-based solution leverages LangChain and OpenAI to create monitoring systems that follow best practices out of the box.
+Automatically generate production-ready Prometheus exporters for target platform of choice using AI agents. This solution leverages LangChain and OpenAI to create monitoring systems that follow best practices out of the box.
 
 ![Workflow Diagram](https://via.placeholder.com/800x400.png?text=AI+Agent+Workflow+Diagram)
 
