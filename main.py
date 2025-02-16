@@ -14,7 +14,7 @@ def load_config():
 prompts, settings = load_config()
 
 # Inject loaded configurations into the modules by overriding the config modules.
-# (This is one way to make the YAML data available to our code.)
+# This ensures that any module importing config.prompts or config.settings gets these values.
 import sys
 import types
 sys.modules["config.prompts"] = types.ModuleType("prompts")
@@ -31,6 +31,10 @@ async def main():
         print(f"Generated Files: {list(results['code'].files.keys())}")
         print(f"Tests Passed: {results['test_result'].passed}")
         print(f"Validation Errors: {len(results['code'].validation_errors)}")
+        print("\n--- Dashboard Design ---")
+        print(results.get("dashboard", "No dashboard design produced"))
+        print("\n--- Alert Suggestions ---")
+        print(results.get("alerts", "No alert suggestions produced"))
         if not results['test_result'].passed:
             print("\n=== Test Output ===")
             print(results['test_result'].output)
