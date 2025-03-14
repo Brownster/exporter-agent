@@ -1,6 +1,6 @@
 #models/schemas.py
 from pydantic import BaseModel, Field
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 
 class CodeArtifact(BaseModel):
     files: Dict[str, str]
