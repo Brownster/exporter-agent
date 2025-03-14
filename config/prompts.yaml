@@ -19,6 +19,30 @@ research_prompts:
     - type: Metric type (one of: gauge, counter, histogram)
     - api_command: details on api / go sdk to use to get metric
 
+  extension: |
+    Analyze the existing Prometheus exporter code provided below and identify:
+    1. The metrics that are already implemented
+    2. Additional metrics that would be valuable to add given the existing codebase
+    3. How the code is structured
+
+    Existing exporter code structure:
+    {structure_summary}
+
+    Target exporter name: {target}
+
+    Your task is to:
+    1. Identify all existing metrics in the code
+    2. Suggest new metrics that would complement the existing ones
+    3. Return a valid JSON object with a key 'metrics' containing a list of ALL metrics (existing and new)
+
+    For EACH metric object, include:
+    - name: Metric name following Prometheus conventions
+    - description: Clear and concise metric description
+    - sample_value: An example value (as a number or string, as appropriate)
+    - type: Metric type (one of: gauge, counter, histogram)
+    - status: Either "existing" (already in the code) or "new" (your suggestion)
+    - api_command: For new metrics, details on the API/SDK to use
+
 coding_prompts:
   main: |
     Generate complete Go code for a Prometheus exporter named {target} that leverages the AWS Connect API.
@@ -35,6 +59,27 @@ coding_prompts:
     - collectors are located /collectors
     - Where possible api config should be located /connect/api.go
     - variables or needed config will need to be passed as flags when starting using kingpin
+    
+  extension: |
+    Extend the existing Prometheus exporter with additional metrics.
+    
+    Existing code structure:
+    {structure_summary}
+    
+    New metrics to add:
+    {new_metrics}
+    
+    Requirements:
+    - Maintain compatibility with the existing code
+    - Follow the same code style and architecture
+    - Implement the new metrics in a way that integrates with the existing collectors
+    - If needed, create new collector files that follow the same pattern as existing ones
+    - Ensure consistent error handling and logging
+    - Add appropriate comments for the new code
+    - Update any necessary registration code in main.go
+    - Preserve all existing functionality
+    
+    Return all modified files with their complete updated content.
     
 tests: |
   Generate a complete suite of Go test code for the Prometheus exporter and its individual collectors.

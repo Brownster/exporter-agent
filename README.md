@@ -6,7 +6,7 @@
 [![Python Version](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Automatically generate production-ready Prometheus exporters for target platform of choice using AI agents. This solution leverages LangChain and OpenAI to create monitoring systems that follow best practices out of the box.
+Automatically generate production-ready Prometheus exporters for target platforms using AI agents. This solution leverages LangChain and LLMs to create monitoring systems that follow best practices out of the box.
 
 ![Workflow Diagram](https://via.placeholder.com/800x400.png?text=AI+Agent+Workflow+Diagram)
 
@@ -17,6 +17,10 @@ Automatically generate production-ready Prometheus exporters for target platform
 - ♻️ Smart retry mechanism with error diagnosis
 - 🧪 Automated test generation and execution
 - ⚙️ YAML-configurable prompts and settings
+- 🔐 Secure API key management
+- 📊 Dashboard and alert suggestion generation
+- 📝 Structured logging with file rotation
+- ⚡ Parallel execution for improved performance
 
 ## Getting Started 🚀
 
@@ -24,59 +28,112 @@ Automatically generate production-ready Prometheus exporters for target platform
 
 - Go 1.20+
 - Python 3.9+
-- [OpenAI API Key](https://platform.openai.com/api-keys)
+- API Key for OpenAI or Anthropic (Claude)
 - Go tools:
   ```bash
   go install golang.org/x/lint/golint@latest
   go install github.com/securego/gosec/v2/cmd/gosec@latest
+  ```
 
-Installation
+### Installation
 
-    Clone the repository:
-    bash
-    Copy
-
+1. Clone the repository:
+    ```bash
     git clone https://github.com/yourusername/exporter-genius.git
     cd exporter-genius
+    ```
 
-    Install Python dependencies:
-    bash
-    Copy
-
+2. Install Python dependencies:
+    ```bash
     pip install -r requirements.txt
+    ```
 
-    Set up OpenAI API key:
-    bash
-    Copy
+3. Run the setup wizard to configure your API keys securely:
+    ```bash
+    python cli.py setup
+    ```
 
-    export OPENAI_API_KEY="your-api-key-here"
+## Usage 📖
 
-Usage 📖
+### Basic Usage
 
-    Configure your exporter in config/prompts.yaml
+Run the exporter generator with default settings to create a new exporter:
 
-    Adjust tool settings in config/settings.yaml
+```bash
+python cli.py run
+```
 
-    Run the generator:
-    bash
-    Copy
+### Advanced Options
 
-    python main.py
+```bash
+# Use a specific target name
+python cli.py run --target mysql_exporter
 
-Example output:
-Copy
+# Set custom log level
+python cli.py run --log-level DEBUG
 
-=== Final Results ===
-Researched Metrics: 8
-Generated Files: ['exporter.go', 'exporter_test.go']
-Tests Passed: True
-Validation Errors: 0
+# Specify custom log file location
+python cli.py run --log-file /path/to/custom/log.txt
 
-Configuration ⚙️
-config/prompts.yaml
-yaml
-Copy
+# Load previously stored API keys
+python cli.py load-keys
+```
 
+### Extension Mode
+
+Extend an existing exporter with new metrics:
+
+```bash
+# Extend an existing exporter
+python cli.py run --mode extend --exporter-path /path/to/existing/exporter
+
+# Extend and change the target name
+python cli.py run --mode extend --exporter-path /path/to/existing/exporter --target enhanced_exporter
+```
+
+### Example Output
+
+```
+Exporter Generation Results
+┌──────────────────┬─────────────────────────────────┐
+│ Metric           │ Value                           │
+├──────────────────┼─────────────────────────────────┤
+│ Researched       │ 8                               │
+│ Metrics          │                                 │
+│ Generated Files  │ exporter.go, exporter_test.go   │
+│ Tests Passed     │ ✅ Yes                          │
+│ Validation       │ 0                               │
+│ Errors           │                                 │
+└──────────────────┴─────────────────────────────────┘
+
+┌─ Dashboard Design ──────────────────────────────┐
+│ # AWS Connect Dashboard                         │
+│                                                 │
+│ This dashboard provides monitoring for AWS      │
+│ Connect metrics with the following panels:      │
+│                                                 │
+│ 1. Queue Length - Line chart showing queue      │
+│    length over time                             │
+│ 2. Agents Online - Gauge showing number of      │
+│    available agents                             │
+└─────────────────────────────────────────────────┘
+
+┌─ Alert Suggestions ─────────────────────────────┐
+│ # AWS Connect Alerts                            │
+│                                                 │
+│ - High Queue Alert: Trigger when                │
+│   aws_connect_queue_length > 20 for 5min        │
+│                                                 │
+│ - Agent Availability: Trigger when              │
+│   aws_connect_agent_online < 5 for 5min         │
+└─────────────────────────────────────────────────┘
+```
+
+## Configuration ⚙️
+
+### Prompts Configuration (`config/prompts.yaml`)
+
+```yaml
 research_prompts:
   main: |
     Research metrics for {target}...
@@ -85,65 +142,76 @@ coding_prompts:
   main: |
     Generate Go code for {metrics}...
 
-config/settings.yaml
-yaml
-Copy
+tests: |
+  Generate tests for the exporter...
+```
 
+### System Settings (`config/settings.yaml`)
+
+```yaml
 app_settings:
   max_retries: 3
-  module_name: "my_exporter"
+  test_timeout: 60
+  module_name: "aws_connect_exporter"
+
+llm:
+  research:
+    provider: gpt-turbo
+    model: gpt-3.5-turbo
+  coding:
+    provider: gpt-turbo
+    model: gpt-3.5-turbo
 
 go_tools:
-  security:
-    command: gosec
-    args: ["-exclude=G104", "./..."]
+  format:
+    command: gofmt
+    args: ["-w"]
+  vet:
+    command: go
+    args: ["vet"]
+```
 
-Example Generated Exporter 🔍
-go
-Copy
+## Project Architecture 🏗️
 
-package main
+The project uses a modular agent-based architecture:
 
-import (
-    "github.com/aws/aws-sdk-go/service/connect"
-    "github.com/prometheus/client_golang/prometheus"
-    "github.com/prometheus/client_golang/prometheus/promhttp"
-)
+- **Research Agent**: Discovers appropriate metrics for the target system
+- **Coding Agent**: Generates Go code for the exporter
+- **Validation Agent**: Validates the generated code with Go tools
+- **Testing Agent**: Runs tests against the generated exporter
+- **Dashboard Agent**: Creates dashboard visualization suggestions
+- **Alert Agent**: Proposes appropriate alerting rules
 
-var queueLength = prometheus.NewGauge(prometheus.GaugeOpts{
-    Name: "aws_connect_queue_length",
-    Help: "Number of calls waiting in queue",
-})
+All agents are orchestrated through a central coordinator that manages the workflow and handles failures gracefully.
 
-func main() {
-    prometheus.MustRegister(queueLength)
-    http.Handle("/metrics", promhttp.Handler())
-    http.ListenAndServe(":8080", nil)
-}
+## Security 🔒
 
-![Screenshot_20250216_212202](https://github.com/user-attachments/assets/d0acb2fe-4f22-42f8-8b4e-cf36a8281567)
+API keys are stored securely using encryption. Keys are never stored in plain text and are only decrypted when needed for API calls.
 
-Contributing 🤝
+## Testing 🧪
+
+Run the test suite with:
+
+```bash
+pytest tests/
+```
+
+## Contributing 🤝
 
 We welcome contributions! Please follow these steps:
 
-    Fork the repository
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-    Create your feature branch (git checkout -b feature/amazing-feature)
-
-    Commit your changes (git commit -m 'Add some amazing feature')
-
-    Push to the branch (git push origin feature/amazing-feature)
-
-    Open a Pull Request
-
-License 📄
+## License 📄
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-Acknowledgments 🙏
 
-    OpenAI for the GPT models
+## Acknowledgments 🙏
 
-    Prometheus community for client libraries
-
-    AWS for Connect API access
+- OpenAI and Anthropic for their LLM APIs
+- Prometheus community for client libraries
+- AWS for Connect API access

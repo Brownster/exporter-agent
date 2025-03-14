@@ -11,6 +11,8 @@ class TestResult(BaseModel):
 
 class ResearchResult(BaseModel):
     metrics: List[Dict[str, str]] = []
+    existing_code: Dict[str, str] = Field(default_factory=dict)
+    structure_analysis: Dict[str, Any] = Field(default_factory=dict)
 
 class IDECommand(BaseModel):
     command: str

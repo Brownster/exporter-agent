@@ -26,10 +26,13 @@ class ValidationAgent:
             return False, str(e)
 
     def validate_code(self, artifact: CodeArtifact) -> ValidatedCodeArtifact:
-        validated = ValidatedCodeArtifact(**artifact.dict())
+        validated = ValidatedCodeArtifact(files=artifact.files)
         temp_files = []
         try:
             for filename, code in artifact.files.items():
+                # Create necessary directories for file
+                os.makedirs(os.path.dirname(filename), exist_ok=True)
+                
                 temp_files.append(filename)
                 with open(filename, "w") as f:
                     f.write(code)
